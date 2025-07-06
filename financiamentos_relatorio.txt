@@ -1,0 +1,46 @@
+========== RELATÓRIO DE FINANCIAMENTOS ==========
+
+Tipo de Financiamento: Terreno
+  - Valor do Imóvel: R$ 150000.00
+  - Valor do Financiamento: R$ 318750.00
+  - Taxa de Juros Anual: 13.00%
+  - Prazo do Financiamento (anos): 12
+  - Tipo de Zona: residencial
+
+Tipo de Financiamento: Casa
+  - Valor do Imóvel: R$ 320000.00
+  - Valor do Financiamento: R$ 1035095.18
+  - Taxa de Juros Anual: 12.00%
+  - Prazo do Financiamento (anos): 25
+  - Área Construída: 150.00 m²
+  - Área do Terreno: 200.00 m²
+
+Tipo de Financiamento: Apartamento
+  - Valor do Imóvel: R$ 450000.00
+  - Valor do Financiamento: R$ 1567295.41
+  - Taxa de Juros Anual: 11.20%
+  - Prazo do Financiamento (anos): 30
+  - Vagas na Garagem: 2
+  - Andar: 8
+
+Tipo de Financiamento: Apartamento
+  - Valor do Imóvel: R$ 550000.00
+  - Valor do Financiamento: R$ 1380500.80
+  - Taxa de Juros Anual: 11.20%
+  - Prazo do Financiamento (anos): 20
+  - Vagas na Garagem: 3
+  - Andar: 15
+
+Tipo de Financiamento: Terreno
+  - Valor do Imóvel: R$ 120000.00
+  - Valor do Financiamento: R$ 255000.00
+  - Taxa de Juros Anual: 13.00%
+  - Prazo do Financiamento (anos): 10
+  - Tipo de Zona: Comercial
+
+================================================
+
+========== TOTAIS GERAIS ==========
+Valor total de todos os imóveis: R$ 1590000.00
+Valor total de todos os financiamentos: R$ 4556641.39
+===================================
