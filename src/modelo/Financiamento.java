@@ -1,7 +1,7 @@
 package modelo;
 import java.util.Locale;
 
-public abstract class Financiamento {
+public abstract class Financiamento implements java.io.Serializable{
     protected double valorImovel;
     protected int prazoFinanciamento;
     protected double taxaJurosAnual;
@@ -45,6 +45,7 @@ public abstract class Financiamento {
         StringBuilder sb = new StringBuilder();
         sb.append("Tipo de Financiamento: ").append(this.getClass().getSimpleName()).append("\n");
         sb.append(String.format(Locale.US, "  - Valor do Imóvel: R$ %.2f\n", this.getValorImovel()));
+        sb.append(String.format(Locale.US, "  - Parcela Mensal: R$ %.2f\n", this.calcularPagamentoMensal())); // <-- LINHA ADICIONADA AQUI
         sb.append(String.format(Locale.US, "  - Valor do Financiamento: R$ %.2f\n", this.calcularTotalPagamento()));
         sb.append(String.format(Locale.US, "  - Taxa de Juros Anual: %.2f%%\n", this.getTaxaJurosAnual()));
         sb.append(String.format(Locale.US, "  - Prazo do Financiamento (anos): %d\n", this.getPrazoFinanciamento()));
@@ -52,10 +53,6 @@ public abstract class Financiamento {
     }
 
     public void exibirDadosFinanciamento() {
-        System.out.println("\n=== RESUMO DO FINANCIAMENTO ===");
-        System.out.printf("Tipo: %s\n", this.getClass().getSimpleName());
-        System.out.printf("Valor do imóvel: R$ %.2f\n", this.getValorImovel());
-        System.out.printf("Valor total do financiamento: R$ %.2f\n", this.calcularTotalPagamento());
-        System.out.printf("Pagamento mensal: R$ %.2f\n", this.calcularPagamentoMensal());
+        System.out.print(this.paraRelatorioDescritivo());
     }
 }

@@ -1,180 +1,186 @@
 package main;
 
 import modelo.Financiamento;
-import modelo.Casa;
-import modelo.Apartamento;
-import modelo.Terreno;
 import util.InterfaceUsuario;
 import util.DadosImovelInvalidosException;
+import util.AumentoMaiorDoQueJurosException; // Exceção que já tínhamos adicionado
+import util.ManipuladorDeArquivos;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
+        // A lista é inicializada vazia e será preenchida via menu
         List<Financiamento> financiamentos = new ArrayList<>();
         InterfaceUsuario interfaceUsuario = new InterfaceUsuario();
         Scanner scanner = new Scanner(System.in);
+        boolean sair = false;
 
-        int opcao = 0;
-        boolean opcaoValida = false;
-
-        do {
-            System.out.println("Qual tipo de financiamento deseja cadastrar?");
-            System.out.println("1. Casa");
-            System.out.println("2. Apartamento");
-            System.out.println("3. Terreno");
-            System.out.print("Digite a opção: ");
+        // Loop principal do menu, continua até o usuário escolher sair
+        while (!sair) {
+            exibirMenu();
+            int escolha = 0;
 
             try {
-                opcao = scanner.nextInt();
-
-                if (opcao >= 1 && opcao <= 3) {
-                    opcaoValida = true;
-                } else {
-                    System.out.println("\nErro: Opção inválida! Por favor, digite 1, 2 ou 3.\n");
-                }
-
-            } catch (InputMismatchException e) {
-                System.out.println("\nErro: Entrada inválida! Por favor, digite apenas números (1, 2 ou 3).\n");
-            } finally {
+                escolha = scanner.nextInt();
                 scanner.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("\nErro: Por favor, digite um número válido para a opção.");
+                scanner.nextLine();
+                continue;
             }
 
-        } while (!opcaoValida);
+            switch (escolha) {
+                case 1:
+                    cadastrarNovoFinanciamento(scanner, interfaceUsuario, financiamentos);
+                    break;
 
-        double valorImovel = interfaceUsuario.pedirValorImovel();
-        int prazo = interfaceUsuario.pedirPrazoFinanciamento();
-        double taxa = interfaceUsuario.pedirTaxaJuros();
+                case 2:
+                    verFinanciamentosSalvos(financiamentos);
+                    break;
 
-        switch (opcao) {
-            case 1:
-                boolean dadosCasaValidos = false;
-                do {
-                    try {
-                        System.out.print("Digite a área construída (m²): ");
-                        double areaConstruida = scanner.nextDouble();
-                        System.out.print("Digite a área do terreno (m²): ");
-                        double areaTerreno = scanner.nextDouble();
-                        scanner.nextLine();
-
-                        // Agora o catch é para DadosImovelInvalidosException
-                        financiamentos.add(new Casa(valorImovel, prazo, taxa, areaConstruida, areaTerreno));
-                        dadosCasaValidos = true;
-
-                    } catch (util.DadosImovelInvalidosException e) {
-                        System.out.println("\nErro de validação: " + e.getMessage());
-                        System.out.println("Por favor, insira os dados da casa novamente.\n");
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nErro: Entrada inválida! Digite apenas números para as áreas.\n");
-                        scanner.nextLine();
+                case 3:
+                    System.out.println("\nSalvando dados...");
+                    if (!financiamentos.isEmpty()) {
+                        salvarDados(financiamentos);
+                        System.out.println("Dados salvos com sucesso!");
+                    } else {
+                        System.out.println("Nenhum financiamento para salvar.");
                     }
-                } while (!dadosCasaValidos);
-                break;
+                    System.out.println("Encerrando o programa. Até logo!");
+                    sair = true;
+                    break;
 
-            case 2:
-                boolean dadosAptoValidos = false;
-                do {
-                    try {
-                        System.out.print("Digite o número de vagas na garagem: ");
-                        int vagas = scanner.nextInt();
-                        System.out.print("Digite o número do andar: ");
-                        int andar = scanner.nextInt();
-                        scanner.nextLine();
-
-                        financiamentos.add(new Apartamento(valorImovel, prazo, taxa, vagas, andar));
-                        dadosAptoValidos = true;
-
-                    } catch (util.DadosImovelInvalidosException e) {
-                        System.out.println("\nErro de validação: " + e.getMessage());
-                        System.out.println("Por favor, insira os dados do apartamento novamente.\n");
-                    } catch (InputMismatchException e) {
-                        System.out.println("\nErro: Entrada inválida! Digite apenas números inteiros.\n");
-                        scanner.nextLine(); // Limpa o buffer
-                    }
-                } while (!dadosAptoValidos);
-                break;
-
-            case 3:
-                boolean dadosTerrenoValidos = false;
-                do {
-                    try {
-                        System.out.print("Digite o tipo de zona (Residencial/Comercial): ");
-                        String zona = scanner.nextLine();
-
-                        financiamentos.add(new Terreno(valorImovel, prazo, taxa, zona));
-                        dadosTerrenoValidos = true;
-
-                    } catch (util.DadosImovelInvalidosException e) {
-                        System.out.println("\nErro de validação: " + e.getMessage());
-                        System.out.println("Por favor, insira os dados do terreno novamente.\n");
-                    }
-                } while (!dadosTerrenoValidos);
-                break;
-        }
-        System.out.println("Financiamento do usuário adicionado à análise.\n");
-
-        try {
-            financiamentos.add(new Casa(320000, 25, 12, 150, 200));
-        } catch (DadosImovelInvalidosException e) {
-            System.out.println("Erro ao criar casa: " + e.getMessage());
-        }
-        try {
-            financiamentos.add(new Apartamento(450000, 30, 11.2, 2, 8));
-        } catch (DadosImovelInvalidosException e) {
-            System.out.println("Erro ao criar apartamento: " + e.getMessage());
-        }
-        try {
-            financiamentos.add(new Apartamento(550000, 20, 11.2, 3, 15));
-        } catch (DadosImovelInvalidosException e) {
-            System.out.println("Erro ao criar apartamento: " + e.getMessage());
-        }
-        try {
-            financiamentos.add(new Terreno(120000, 10, 13, "Comercial"));
-        } catch (DadosImovelInvalidosException e) {
-            System.out.println("Erro ao criar terreno: " + e.getMessage());
+                default:
+                    System.out.println("\nOpção inválida! Por favor, escolha uma opção de 1 a 3.");
+                    break;
+            }
         }
 
+        scanner.close();
+    }
+    //Exibe o menu principal de opções para o usuário.
+    private static void exibirMenu() {
+        System.out.println("\n========== MENU PRINCIPAL ==========");
+        System.out.println("1. Cadastrar Novo Financiamento");
+        System.out.println("2. Ver Financiamentos Salvos");
+        System.out.println("3. Sair e Salvar Dados");
+        System.out.print("Escolha uma opção: ");
+    }
+
+    //Cuida do fluxo de cadastro de um novo financiamento.
+
+    private static void cadastrarNovoFinanciamento(Scanner scanner, InterfaceUsuario ui, List<Financiamento> lista) {
+        System.out.println("\n--- Cadastro de Novo Financiamento ---");
+        System.out.println("Qual tipo de financiamento deseja cadastrar?");
+        System.out.println("1. Casa");
+        System.out.println("2. Apartamento");
+        System.out.println("3. Terreno");
+        System.out.print("Digite a opção: ");
+
+        int tipo = scanner.nextInt();
+        scanner.nextLine();
+
+        double valorImovel = ui.pedirValorImovel();
+        int prazo = ui.pedirPrazoFinanciamento();
+        double taxa = ui.pedirTaxaJuros();
+
+        Financiamento novoFinanciamento = criarFinanciamento(scanner, tipo, valorImovel, prazo, taxa);
+
+        if (novoFinanciamento != null) {
+            lista.add(novoFinanciamento);
+            System.out.println("\nFinanciamento cadastrado com sucesso!");
+        } else {
+            System.out.println("\nO cadastro do financiamento foi cancelado devido a um erro de validação.");
+        }
+    }
+    //Exibe a lista de financiamentos já cadastrados e os totais.
+    private static void verFinanciamentosSalvos(List<Financiamento> financiamentos) {
+        if (financiamentos.isEmpty()) {
+            System.out.println("\nNenhum financiamento cadastrado ainda.");
+            return;
+        }
+
+        System.out.println("\n---------- LISTA DE FINANCIAMENTOS CADASTRADOS ----------");
         double totalImoveis = 0;
         double totalFinanciamentos = 0;
 
         for (Financiamento f : financiamentos) {
             f.exibirDadosFinanciamento();
             totalImoveis += f.getValorImovel();
-            try {
-                totalFinanciamentos += f.calcularTotalPagamento();
-            } catch (Exception e) {
-                System.out.println("Erro ao calcular total do financiamento: " + e.getMessage());
-            }
+            totalFinanciamentos += f.calcularTotalPagamento();
         }
-
+        System.out.println("----------------------------------------------------------\n");
         System.out.println("---------- TOTAIS GERAIS ----------");
         System.out.printf("Total de todos os imóveis: R$ %.2f\n", totalImoveis);
         System.out.printf("Total de todos os financiamentos: R$ %.2f\n", totalFinanciamentos);
         System.out.println("------------------------------------");
+    }
 
+    //Chama os métodos para salvar os dados em arquivos de texto e serializados.
+    private static void salvarDados(List<Financiamento> financiamentos) {
         String arquivoDeDados = "financiamentos_dados.csv";
         String arquivoDeRelatorio = "financiamentos_relatorio.txt";
+        String arquivoSerializado = "financiamentos.dat";
 
-        // 1. Grava o relatório descritivo para leitura humana
-        util.ManipuladorDeArquivos.gravarRelatorioDescritivo(arquivoDeRelatorio, financiamentos);
-        System.out.println("\nRelatório descritivo salvo com sucesso em '" + arquivoDeRelatorio + "'.");
+        ManipuladorDeArquivos.gravarRelatorioDescritivo(arquivoDeRelatorio, financiamentos);
+        ManipuladorDeArquivos.gravarFinanciamentosCSV(arquivoDeDados, financiamentos);
+        ManipuladorDeArquivos.serializarFinanciamentos(arquivoSerializado, financiamentos);
+    }
 
-        // 2. Grava o arquivo de dados para leitura do programa
-        util.ManipuladorDeArquivos.gravarFinanciamentosCSV(arquivoDeDados, financiamentos);
-        System.out.println("Arquivo de dados salvo com sucesso em '" + arquivoDeDados + "'.");
+    private static Financiamento criarFinanciamento(Scanner scanner, int tipo, double valorImovel, int prazo, double taxa) {
+        Financiamento financiamento = null;
+        boolean dadosValidos = false;
 
-        // 3. Lê o arquivo de DADOS para comprovar
-        List<Financiamento> financiamentosLidos = util.ManipuladorDeArquivos.lerFinanciamentosCSV(arquivoDeDados);
-
-        System.out.println("\n--- Comprovação da Leitura do Arquivo de Dados ---");
-        if (financiamentosLidos.isEmpty()) {
-            System.out.println("Nenhum dado foi lido do arquivo de dados ou ocorreu um erro.");
-        } else {
-            System.out.println(financiamentosLidos.size() + " financiamentos lidos com sucesso.");
-        }
-
-        scanner.close();
+        do {
+            try {
+                switch (tipo) {
+                    case 1: // Casa
+                        System.out.print("Digite a área construída (m²): ");
+                        double areaConstruida = scanner.nextDouble();
+                        System.out.print("Digite a área do terreno (m²): ");
+                        double areaTerreno = scanner.nextDouble();
+                        scanner.nextLine();
+                        financiamento = new modelo.Casa(valorImovel, prazo, taxa, areaConstruida, areaTerreno);
+                        ((modelo.Casa) financiamento).verificarAumentoFixo();
+                        break;
+                    case 2: // Apartamento
+                        System.out.print("Digite o número de vagas na garagem: ");
+                        int vagas = scanner.nextInt();
+                        System.out.print("Digite o número do andar: ");
+                        int andar = scanner.nextInt();
+                        scanner.nextLine();
+                        financiamento = new modelo.Apartamento(valorImovel, prazo, taxa, vagas, andar);
+                        break;
+                    case 3: // Terreno
+                        System.out.print("Digite o tipo de zona (Residencial/Comercial): ");
+                        String zona = scanner.nextLine();
+                        financiamento = new modelo.Terreno(valorImovel, prazo, taxa, zona);
+                        break;
+                    default:
+                        System.out.println("Tipo de imóvel inválido.");
+                        break;
+                }
+                dadosValidos = true;
+            } catch (DadosImovelInvalidosException e) {
+                System.out.println("\nErro de validação: " + e.getMessage());
+                System.out.println("Por favor, insira os dados específicos do imóvel novamente.\n");
+            } catch (AumentoMaiorDoQueJurosException e) {
+                System.out.println("\n-------------------------------------------------------------");
+                System.out.println("ATENÇÃO: Erro na regra de negócio do financiamento da Casa.");
+                System.out.println("Motivo: " + e.getMessage());
+                System.out.println("Este erro ocorre porque a taxa fixa de R$80,00 tem um impacto percentual muito alto para as condições informadas.");
+                System.out.println("Por favor, tente novamente com um valor de imóvel maior, um prazo menor ou uma taxa de juros diferente.");
+                System.out.println("-------------------------------------------------------------\n");
+                return null;
+            } catch (InputMismatchException e) {
+                System.out.println("\nErro: Entrada inválida! Digite o tipo de dado correto.\n");
+                scanner.nextLine();
+            }
+        } while (!dadosValidos);
+        return financiamento;
     }
 }

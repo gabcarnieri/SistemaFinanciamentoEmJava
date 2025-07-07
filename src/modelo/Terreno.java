@@ -9,7 +9,6 @@ public class Terreno extends Financiamento {
     public Terreno(double valorImovel, int prazoFinanciamento, double taxaJurosAnual, String tipoZona) throws DadosImovelInvalidosException {
         super(valorImovel, prazoFinanciamento, taxaJurosAnual);
 
-        // Validação do tipo de zona (ignorando maiúsculas/minúsculas)
         if (!tipoZona.equalsIgnoreCase("Residencial") && !tipoZona.equalsIgnoreCase("Comercial")) {
             throw new DadosImovelInvalidosException("Tipo de zona inválido. Por favor, digite 'Residencial' ou 'Comercial'.");
         }
@@ -25,7 +24,6 @@ public class Terreno extends Financiamento {
 
     @Override
     public String paraFormatoCSV() {
-        // Para strings (%s), o Locale não afeta, mas mantemos o padrão.
         return super.paraFormatoCSV() + String.format(Locale.US, ",%s", this.tipoZona);
     }
 
@@ -33,12 +31,5 @@ public class Terreno extends Financiamento {
     public String paraRelatorioDescritivo() {
         return super.paraRelatorioDescritivo() +
                 String.format(Locale.US, "  - Tipo de Zona: %s\n\n", this.tipoZona);
-    }
-    
-    @Override
-    public void exibirDadosFinanciamento() {
-        super.exibirDadosFinanciamento();
-        System.out.printf("Tipo de Zona: %s\n", this.tipoZona);
-        System.out.println("===============================");
     }
 }

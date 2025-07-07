@@ -9,11 +9,10 @@ public class Apartamento extends Financiamento {
     public Apartamento(double valorImovel, int prazoFinanciamento, double taxaJurosAnual, int vagasGaragem, int numeroAndar) throws DadosImovelInvalidosException {
         super(valorImovel, prazoFinanciamento, taxaJurosAnual);
 
-        // Validação dos dados do apartamento
         if (vagasGaragem < 0) {
             throw new DadosImovelInvalidosException("O número de vagas na garagem não pode ser negativo.");
         }
-        if (numeroAndar <= 0 || numeroAndar > 200) { // Ex: Definimos um limite realista de 200 andares
+        if (numeroAndar <= 0 || numeroAndar > 200) {
             throw new DadosImovelInvalidosException("O número do andar deve ser um valor positivo e realista (ex: entre 1 e 200).");
         }
 
@@ -30,7 +29,6 @@ public class Apartamento extends Financiamento {
 
     @Override
     public String paraFormatoCSV() {
-        // No caso de inteiros (%d), o Locale não é estritamente necessário, mas é uma boa prática manter a consistência.
         return super.paraFormatoCSV() + String.format(Locale.US, ",%d,%d", this.vagasGaragem, this.numeroAndar);
     }
 
@@ -39,13 +37,5 @@ public class Apartamento extends Financiamento {
         return super.paraRelatorioDescritivo() +
                 String.format(Locale.US, "  - Vagas na Garagem: %d\n", this.vagasGaragem) +
                 String.format(Locale.US, "  - Andar: %d\n\n", this.numeroAndar);
-    }
-
-    @Override
-    public void exibirDadosFinanciamento() {
-        super.exibirDadosFinanciamento(); // Exibe dados comuns
-        System.out.printf("Vagas na Garagem: %d\n", this.vagasGaragem);
-        System.out.printf("Número do Andar: %d\n", this.numeroAndar);
-        System.out.println("===============================");
     }
 }

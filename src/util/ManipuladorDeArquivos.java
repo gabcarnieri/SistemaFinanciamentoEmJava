@@ -8,9 +8,7 @@ import java.util.Locale;
 
 public class ManipuladorDeArquivos {
 
-    /**
-     * Grava o relatório descritivo (para leitura humana) em um arquivo .txt.
-     */
+    //Grava o relatório descritivo em um arquivo .txt.
     public static void gravarRelatorioDescritivo(String nomeArquivo, List<Financiamento> financiamentos) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
             writer.println("========== RELATÓRIO DE FINANCIAMENTOS ==========\n");
@@ -34,9 +32,7 @@ public class ManipuladorDeArquivos {
         }
     }
 
-    /**
-     * Grava os dados dos financiamentos em formato CSV (para leitura do programa).
-     */
+    //Grava os dados dos financiamentos em formato CSV (para leitura do programa).
     public static void gravarFinanciamentosCSV(String nomeArquivo, List<Financiamento> financiamentos) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo))) {
             for (Financiamento f : financiamentos) {
@@ -47,11 +43,8 @@ public class ManipuladorDeArquivos {
         }
     }
 
-    /**
-     * Lê os dados de um arquivo CSV e retorna uma lista de objetos de Financiamento.
-     * Este é o método que precisava ser renomeado corretamente.
-     */
-    public static List<Financiamento> lerFinanciamentosCSV(String nomeArquivo) { // <-- NOME CORRIGIDO AQUI
+    //Lê os dados de um arquivo CSV e retorna uma lista de objetos de Financiamento.
+    public static List<Financiamento> lerFinanciamentosCSV(String nomeArquivo) {
         List<Financiamento> financiamentosLidos = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(nomeArquivo))) {
             String linha;
@@ -87,6 +80,25 @@ public class ManipuladorDeArquivos {
             }
         } catch (IOException | DadosImovelInvalidosException e) {
             System.err.println("Ocorreu um erro ao ler o arquivo CSV: " + e.getMessage());
+        }
+        return financiamentosLidos;
+    }
+
+    public static void serializarFinanciamentos(String nomeArquivo, List<Financiamento> financiamentos) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
+            oos.writeObject(financiamentos);
+        } catch (IOException e) {
+            System.err.println("Erro ao serializar os dados: " + e.getMessage());
+        }
+    }
+
+    // Metodo para ler a lista de objetos (deserializar)
+    public static List<Financiamento> deserializarFinanciamentos(String nomeArquivo) {
+        List<Financiamento> financiamentosLidos = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            financiamentosLidos = (List<Financiamento>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao deserializar os dados: " + e.getMessage());
         }
         return financiamentosLidos;
     }

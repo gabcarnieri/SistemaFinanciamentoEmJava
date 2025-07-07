@@ -11,65 +11,71 @@ public class InterfaceUsuario {
     }
 
     public double pedirValorImovel() {
+        return pedirDoubleValidado(
+                "Digite o valor do Imovel: ",
+                "Erro: O valor do imovel deve ser entre R$50.001 e R$499.999!",
+                50000,
+                500000
+        );
+    }
+
+    public int pedirPrazoFinanciamento() {
+        return pedirIntValidado(
+                "Digite o prazo em anos: ",
+                "Erro: O prazo deve ser positivo e menor que 80 anos.",
+                0,
+                80
+        );
+    }
+
+    public double pedirTaxaJuros() {
+        return pedirDoubleValidado(
+                "Digite a taxa de juros anual (%): ",
+                "Erro: A taxa de juros deve ser maior que 9% e menor que 27%!",
+                9,
+                27
+        );
+    }
+
+    private double pedirDoubleValidado(String prompt, String erro, double min, double max) {
         double valor = 0;
+        boolean valido = false;
         do {
             try {
-                System.out.print("Digite o valor do Imovel: ");
+                System.out.print(prompt);
                 valor = scanner.nextDouble();
-                scanner.nextLine();
-
-                if (valor <= 50000 || valor >= 500000) {
-                    System.out.println("Erro: O valor do imovel deve ser entre R$50.001 e R$499.999!");
+                if (valor > min && valor < max) {
+                    valido = true;
+                } else {
+                    System.out.println(erro);
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Erro: Entrada inválida! Digite apenas números.");
                 scanner.nextLine();
-                valor = 0;
             }
-        } while (valor <= 50000 || valor >= 500000);
-
+        } while (!valido);
+        scanner.nextLine();
         return valor;
     }
 
-    public int pedirPrazoFinanciamento() {
-        int prazo = 0;
+    private int pedirIntValidado(String prompt, String erro, int min, int max) {
+        int valor = 0;
+        boolean valido = false;
         do {
             try {
-                System.out.print("Digite o prazo em anos: ");
-                prazo = scanner.nextInt();
-                scanner.nextLine();
-
-                if (prazo <= 0 || prazo >= 80) {
-                    System.out.println("Erro: O prazo deve ser positivo e menor que 80 anos.");
+                System.out.print(prompt);
+                valor = scanner.nextInt();
+                if (valor > min && valor < max) {
+                    valido = true;
+                } else {
+                    System.out.println(erro);
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Erro: Entrada inválida! Digite apenas números inteiros.");
                 scanner.nextLine();
-                prazo = 0;
             }
-        } while (prazo <= 0 || prazo >= 80);
-
-        return prazo;
-    }
-
-    public double pedirTaxaJuros() {
-        double taxa = 0;
-        do {
-            try {
-                System.out.print("Digite a taxa de juros anual (%): ");
-                taxa = scanner.nextDouble();
-                scanner.nextLine();
-
-                if (taxa <= 9 || taxa >= 27) {
-                    System.out.println("Erro: A taxa de juros deve ser maior que 9% e menor que 27%!");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Erro: Entrada inválida! Digite apenas números.");
-                scanner.nextLine();
-                taxa = 0;
-            }
-        } while (taxa <= 9 || taxa >= 27);
-
-        return taxa;
+        } while (!valido);
+        scanner.nextLine();
+        return valor;
     }
 }
